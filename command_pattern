@@ -1,0 +1,108 @@
+import java.util.ArrayList;
+
+interface Command{
+
+    public void execute();
+    void unexecute();
+}
+
+
+class Calculator{
+    private int currrentvalue;
+    Calculator(){
+        currrentvalue=0;
+    }
+
+    public void action(char _operator, int operand){
+        switch (_operator){
+            case '+': currrentvalue+=operand; break;
+            case '-': currrentvalue-=operand; break;
+            case '*': currrentvalue*=operand; break;
+            case '/': currrentvalue/=operand; break;
+        }
+        System.out.println("Current value "+currrentvalue +" following "+_operator+ operand);
+    }
+}
+
+class CalculatorCommand implements Command{
+    private Calculator _calculator;
+    private char _operator;
+    private int _operand;
+
+    public CalculatorCommand(Calculator calculator, char op, int operand){
+        _calculator=calculator;
+        _operator=op;
+        _operand=operand;
+    }
+    
+    @Override
+    public void execute() {
+        _calculator.action(_operator, _operand);
+    }
+
+    @Override
+    public void unexecute() {
+    }
+}
+
+class User{
+    private int current;
+    private ArrayList<Command> _commands= new ArrayList<Command>();
+    public User(){
+        current=0;
+    }
+
+        void Redo(int levels) {
+        System.out.println("\n---- Redo " + levels + " levels ");
+        // Perform redo operations
+        for (int i = 0; i < levels; i++) {
+            if (current < _commands.size()) {
+                Command command = _commands.get(current++);
+                command.execute();
+            }}}
+
+        void Compute(Command command){
+        command.execute();
+        _commands.add(command);
+        current++;
+    }
+            void Undo(int levels) {
+                System.out.println("\n---- Undo " + levels + " levels ");
+                // Perform undo operations
+                for (int i = 0; i < levels; i++) {
+                    if (current > 0) {
+                        Command command = _commands.get(--current);
+                        command.unexecute();
+                    }
+                }
+            }
+            // Initializers.
+        };
+
+        public class Main {
+    public static void main(String[] args) {
+
+        Calculator c = new Calculator();
+        CalculatorCommand command1 = new CalculatorCommand(c, '+', 4);
+        // Create user and let her compute
+        Command command = null;
+        User user = new User();
+        Calculator calculator = new Calculator();
+
+        command = new CalculatorCommand(calculator, '+', 100);
+        user.Compute(command);
+        command = new CalculatorCommand(calculator, '-', 50);
+        user.Compute(command);
+        command = new CalculatorCommand(calculator, '*', 10);
+        user.Compute(command);
+        command = new CalculatorCommand(calculator, '/', 2);
+        user.Compute(command);
+
+        // Undo 4 commands
+        user.Undo(4);
+        // Redo 2 commands
+        user.Redo(2);
+    }
+}
+
+
